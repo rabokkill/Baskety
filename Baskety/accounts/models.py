@@ -41,11 +41,15 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=User)
 def create_user_settings(sender, instance, created, **kwargs):
+    if kwargs.get('raw'):
+        return
     if created:
         UserSettings.objects.get_or_create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_settings(sender, instance, **kwargs):
+    if kwargs.get('raw'):
+        return
     if hasattr(instance, 'settings'):
         instance.settings.save()
     else:
